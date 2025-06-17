@@ -1,0 +1,153 @@
+:root {
+  --main-orange: #FF6600;
+  --main-orange-dark: #D35400;
+  --main-bg: #FFF8F2;
+  --main-text: #222;
+  --tab-active: #fff;
+  --tab-inactive: #FFE0CC;
+  --shadow: 0 4px 16px rgba(255, 102, 0, 0.08);
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+  background: var(--main-bg);
+  color: var(--main-text);
+}
+
+.header {
+  background: var(--main-orange);
+  color: #fff;
+  padding: 28px 0 16px 0;
+  text-align: center;
+  font-size: 2rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  border-radius: 0 0 24px 24px;
+  box-shadow: var(--shadow);
+}
+
+.tabs {
+  display: flex;
+  justify-content: space-around;
+  background: var(--tab-inactive);
+  border-radius: 16px;
+  margin: 24px 12px 0 12px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+
+.tab {
+  flex: 1;
+  padding: 14px 0 10px 0;
+  text-align: center;
+  cursor: pointer;
+  color: var(--main-orange);
+  font-weight: 500;
+  font-size: 1.1rem;
+  background: var(--tab-inactive);
+  border: none;
+  outline: none;
+  transition: background 0.2s, color 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.tab.active {
+  background: var(--main-orange);
+  color: #fff;
+}
+.content {
+  /* Убираем margin-left */
+  padding: 24px 12px 80px 12px;
+  min-height: 320px;
+  font-size: 1.1rem;
+  border-radius: 20px;
+  background: #fff;
+  margin-top: 18px;
+  box-shadow: var(--shadow);
+}
+.fab {
+  position: fixed;
+  right: 24px;
+  bottom: 32px;
+  background: var(--main-orange);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 2.4rem;
+  box-shadow: 0 4px 24px rgba(255, 102, 0, 0.22);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, transform 0.1s;
+  z-index: 100;
+}
+.fab:active {
+  background: var(--main-orange-dark);
+  transform: scale(0.96);
+}
+.sidebar {
+  flex-shrink: 0; 
+  display: flex;
+  flex-direction: column;
+  width: 160px;
+  background: var(--tab-inactive);
+  border-radius: 16px;
+  margin: 24px 12px 0 12px;
+  box-shadow: var(--shadow);
+  padding: 12px 0;
+  height: calc(100vh - 120px); /* высота с учётом header и отступов */
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 20px;
+  margin: 6px 12px;
+  background: var(--tab-inactive);
+  border: none;
+  border-radius: 12px;
+  color: var(--main-orange);
+  font-weight: 500;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.tab.active {
+  background: var(--main-orange);
+  color: #fff;
+}
+
+.tab:hover {
+  background: #ff7a33;
+  color: #fff;
+}
+
+.tab-name {
+  display: inline-block;
+}
+
+.content {
+  flex: 1;
+  padding: 24px 12px 80px 12px;
+  min-height: 320px;
+  font-size: 1.1rem;
+  border-radius: 20px;
+  background: #fff;
+  margin: 18px 18px 0 0; /* добавляем правый отступ 12px */
+  box-shadow: var(--shadow);
+}
+.main-layout {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 12px;
+}
