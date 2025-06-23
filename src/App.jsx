@@ -5,6 +5,9 @@ import FloatingButton from './components/FloatingButton';
 import './App.css';
 import Profile from './pages/Profile';
 import Workouts from './pages/Workouts';
+import { supabase } from './supabaseClient';
+import { upsertUserProfile, insertWorkout } from './api';
+import { insertWorkout } from './api';
 
 function App() {
   const [tab, setTab] = useState('profile');
@@ -26,14 +29,23 @@ function App() {
     height: ''
   });
 
-  const addWorkout = (newWorkout) => {
+ const addWorkout = async (newWorkout) => {
+  try {
+    if (!userProfile?.id) {
+      alert('Сначала сохраните профиль!');
+      return;
+    }
     const workout = {
-      id: Date.now(),
-      ...newWorkout
+      ...newWorkout,
+      user_id: userProfile.id // обязательно для связи с пользователем
     };
-    setWorkouts([...workouts, workout]);
+    const savedWorkout = await insertWorkout(workout);
+    setWorkouts([...workouts, savedWorkout]);
     setShowCreateModal(false);
-  };
+  } catch (err) {
+    alert('Ошибка сохранения тренировки: ' + err.message);
+  }
+};
 
   const deleteWorkout = (id) => {
     setWorkouts(workouts.filter(workout => workout.id !== id));
