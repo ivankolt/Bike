@@ -59,6 +59,20 @@ function WorkoutCard({ workout, onDelete }) {
     </div>
   );
 }
-
+function Workouts({ workouts, onDeleteWorkout }) {
+  return (
+    <div>
+      <h2>Мои тренировки</h2>
+      {workouts.length === 0 ? (
+        <div>Пока нет тренировок</div>
+      ) : (
+        workouts.map(workout => (
+          <WorkoutCard key={workout.id} workout={workout} onDelete={onDeleteWorkout} />
+        ))
+      )}
+    </div>
+  );
+}
+    
 
 export default Workouts;
