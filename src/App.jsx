@@ -17,6 +17,14 @@ function App() {
   const handleAddWorkout = () => {
     setShowCreateModal(true);
   };
+  
+  const [userProfile, setUserProfile] = useState({
+    first_name: '',
+    username: '',
+    age: '',
+    weight: '',
+    height: ''
+  });
 
   const addWorkout = (newWorkout) => {
     const workout = {
@@ -34,12 +42,13 @@ function App() {
   const renderContent = () => {
     switch (tab) {
       case 'profile':
-        return <Profile />;
+         return <Profile userProfile={userProfile} onSave={setUserProfile} />;
       case 'workouts':
         return (
-          <Workouts 
+          <Workouts
             workouts={workouts}
             onDeleteWorkout={deleteWorkout}
+            userProfile={userProfile}
           />
         );
       case 'competitions':
