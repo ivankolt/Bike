@@ -73,7 +73,7 @@ function Profile({ userProfile, onSave }) {
         <h2 style={{ margin: 0 }}>{form.first_name || 'Гость'}</h2>
         <div style={{ color: '#888', marginTop: 6 }}>@{form.username || 'no_username'}</div>
         <div style={{ marginTop: 16, color: '#aaa', fontSize: 14 }}>
-          Telegram ID: {user?.id || '—'}
+          Telegram ID: {userProfile.telegram_id || '—'}
         </div>
       </div>
 

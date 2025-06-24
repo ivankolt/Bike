@@ -23,19 +23,18 @@ function App() {
     age: '',
     weight: '',
     height: '',
-    telegram_id: ''
+    telegram_id: null
   });
-  useEffect(() => {
+   useEffect(() => {
     if (window.Telegram && window.Telegram.WebApp) {
       window.Telegram.WebApp.ready();
       const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
       if (tgUser) {
-        setUserProfile(prev => ({
-          ...prev,
-          first_name: tgUser.first_name || '',
-          username: tgUser.username || '',
-          telegram_id: tgUser.id || ''
-        }));
+        setUserProfile({
+          telegram_id: tgUser.id,
+          first_name: tgUser.first_name,
+          username: tgUser.username
+        });
       }
     }
   }, []);
