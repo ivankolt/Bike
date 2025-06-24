@@ -16,26 +16,37 @@ import { useEffect } from 'react';
 function App() {
   const [tab, setTab] = useState('profile');
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [workouts, setWorkouts] = useState([
-    { id: 1, name: "Утренняя поездка", distance: "15 км", date: "2025-06-12", duration: "45 мин" },
-    { id: 2, name: "Вечерняя тренировка", distance: "22 км", date: "2025-06-11", duration: "60 мин" },
-  ]);
+  const [workouts, setWorkouts] = useState([]);
+  const [userProfile, setUserProfile] = useState({
+    first_name: '',
+    username: '',
+    age: '',
+    weight: '',
+    height: '',
+    telegram_id: ''
+  });
   useEffect(() => {
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    // Можно сразу получить данные пользователя
-    // window.Telegram.WebApp.initDataUnsafe.user
-  }
-}, []);
+    if (window.Telegram && window.Telegram.WebApp) {
+      window.Telegram.WebApp.ready();
+      const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+      if (tgUser) {
+        setUserProfile(prev => ({
+          ...prev,
+          first_name: tgUser.first_name || '',
+          username: tgUser.username || '',
+          telegram_id: tgUser.id || ''
+        }));
+      }
+    }
+  }, []);
 
   const handleAddWorkout = () => {
     setShowCreateModal(true);
   };
   const handleSaveProfile = async (profile) => {
   try {
-    // Добавь telegram_id, если он есть (например, из Telegram WebApp)
-    const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 123456;
-    const profileWithId = { ...profile, telegram_id };
+    // telegram_id можно брать из userProfile или из profile, оба варианта ок
+    const profileWithId = { ...profile, telegram_id: userProfile.telegram_id };
     const savedProfile = await upsertUserProfile(profileWithId);
     setUserProfile(savedProfile);
     alert('Профиль сохранён!');
@@ -44,13 +55,6 @@ function App() {
   }
 };
   
-  const [userProfile, setUserProfile] = useState({
-    first_name: '',
-    username: '',
-    age: '',
-    weight: '',
-    height: ''
-  });
 
  const addWorkout = async (newWorkout) => {
   try {

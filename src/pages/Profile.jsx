@@ -3,39 +3,23 @@ import { useEffect, useState } from 'react';
 function Profile({ userProfile, onSave }) {
   const [user, setUser] = useState(null);
   const [form, setForm] = useState({
-    first_name: '',
-    username: '',
-    age: '',
-    weight: '',
-    height: ''
+    first_name: userProfile.first_name || '',
+    username: userProfile.username || '',
+    age: userProfile.age || '',
+    weight: userProfile.weight || '',
+    height: userProfile.height || '',
+    telegram_id: userProfile.telegram_id || ''
   });
 
   useEffect(() => {
-    if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-      setUser(tgUser);
-      setForm({
-        first_name: tgUser.first_name || '',
-        username: tgUser.username || '',
-        age: userProfile?.age || '',
-        weight: userProfile?.weight || '',
-        height: userProfile?.height || ''
-      });
-    } else {
-      // Мок-данные для разработки вне Telegram
-      setUser({
-        id: 123456,
-        first_name: "DemoUser",
-        username: "demo_user"
-      });
-      setForm({
-        first_name: userProfile?.first_name || 'DemoUser',
-        username: userProfile?.username || 'demo_user',
-        age: userProfile?.age || '',
-        weight: userProfile?.weight || '',
-        height: userProfile?.height || ''
-      });
-    }
+    setForm({
+      first_name: userProfile.first_name || '',
+      username: userProfile.username || '',
+      age: userProfile.age || '',
+      weight: userProfile.weight || '',
+      height: userProfile.height || '',
+      telegram_id: userProfile.telegram_id || ''
+    });
   }, [userProfile]);
 
   const handleChange = (e) => {
