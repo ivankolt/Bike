@@ -83,6 +83,7 @@ function Profile({ userProfile, onSave }) {
           type="text"
           name="first_name"
           value={form.first_name}
+          autocomplete="given-name"
           onChange={handleChange}
           style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
           required
@@ -95,7 +96,13 @@ function Profile({ userProfile, onSave }) {
           type="text"
           name="username"
           value={form.username}
-          onChange={handleChange}
+          autocomplete="username"
+          onChange={(e) => {
+          console.log('Username changed:', e.target.value);
+          setForm({ ...form, username: e.target.value });
+        }}
+        onFocus={() => console.log('Username field focused')}
+        onBlur={() => console.log('Username field blurred')}
           style={{ width: '100%', padding: 8, borderRadius: 6, border: '1px solid #ccc' }}
         />
       </div>
