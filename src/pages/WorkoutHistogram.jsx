@@ -9,7 +9,7 @@ Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 function getHistogramData(workouts, period = 'week') {
   const grouped = {};
   workouts.forEach(w => {
-    const date = w.date; // "2025-06-24"
+    const date = w.date;
     const km = parseFloat((w.distance || '').replace(/[^\d.]/g, '')) || 0;
     if (!grouped[date]) grouped[date] = 0;
     grouped[date] += km;
@@ -32,9 +32,13 @@ function getHistogramData(workouts, period = 'week') {
       days.push(key);
     }
   }
+  const data = days.map(date => grouped[date] || 0);
+  const total = data.reduce((sum, val) => sum + val, 0); // сумма км
+
   return {
     labels: days,
-    data: days.map(date => grouped[date] || 0)
+    data,
+    total
   };
 }
 
