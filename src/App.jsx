@@ -6,8 +6,12 @@ import './App.css';
 import Profile from './pages/Profile';
 import Workouts from './pages/Workouts';
 import { supabase } from './supabaseClient';
-import { upsertUserProfile, insertWorkout } from './api';
-import { insertWorkout } from './api';
+import { upsertUserProfile } from './supabaseApi';
+import { insertWorkout } from './supabaseApi';
+
+import { useEffect } from 'react';
+
+
 
 function App() {
   const [tab, setTab] = useState('profile');
@@ -16,10 +20,29 @@ function App() {
     { id: 1, name: "Утренняя поездка", distance: "15 км", date: "2025-06-12", duration: "45 мин" },
     { id: 2, name: "Вечерняя тренировка", distance: "22 км", date: "2025-06-11", duration: "60 мин" },
   ]);
+  useEffect(() => {
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    // Можно сразу получить данные пользователя
+    // window.Telegram.WebApp.initDataUnsafe.user
+  }
+}, []);
 
   const handleAddWorkout = () => {
     setShowCreateModal(true);
   };
+  const handleSaveProfile = async (profile) => {
+  try {
+    // Добавь telegram_id, если он есть (например, из Telegram WebApp)
+    const telegram_id = window.Telegram?.WebApp?.initDataUnsafe?.user?.id || 123456;
+    const profileWithId = { ...profile, telegram_id };
+    const savedProfile = await upsertUserProfile(profileWithId);
+    setUserProfile(savedProfile);
+    alert('Профиль сохранён!');
+  } catch (err) {
+    alert('Ошибка сохранения профиля: ' + err.message);
+  }
+};
   
   const [userProfile, setUserProfile] = useState({
     first_name: '',
@@ -54,7 +77,7 @@ function App() {
   const renderContent = () => {
     switch (tab) {
       case 'profile':
-         return <Profile userProfile={userProfile} onSave={setUserProfile} />;
+      return <Profile userProfile={userProfile} onSave={handleSaveProfile} />;
       case 'workouts':
         return (
           <Workouts
@@ -116,76 +139,108 @@ function CreateWorkoutModal({ onClose, onSave }) {
 
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const newWorkoutClear = {
+  name: '',
+  distance: '',
+  duration: '',
+  date: new Date().toISOString().split('T')[0],
+  avgPower: '',
+  maxPower: '',
+  avgHeartRate: '',
+  maxHeartRate: '',
+  calories: '',
+  elevation: '',
+  avgSpeed: '',
+  maxSpeed: ''
+};
 
-  const handleSave = () => {
-    if (newWorkout.name && newWorkout.distance) {
-      onSave(newWorkout);
-    }
-  };
+  const handleSave = async () => {
+  setIsProcessing(true);
+  try {
+    await addWorkout(newWorkout); // addWorkout должен быть асинхронной функцией, сохраняющей в Supabase
+    // Можно сбросить форму или закрыть модалку
+    setNewWorkout(newWorkoutClear);
+    onClose();
+  } catch (err) {
+    alert('Ошибка сохранения: ' + err.message);
+  } finally {
+    setIsProcessing(false);
+  }
+};
 
-  return (
+
+ return (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000
+  }}>
     <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
+      background: 'white',
+      padding: 24,
+      borderRadius: 16,
+      width: '90%',
+      maxWidth: 500,
+      maxHeight: '90vh',
+      overflowY: 'auto',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
     }}>
-      <div style={{
-        background: 'white',
-        padding: 24,
-        borderRadius: 16,
-        width: '90%',
-        maxWidth: 500,
-        maxHeight: '90vh',
-        overflowY: 'auto',
-        boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
-      }}>
-        <h3 style={{ margin: '0 0 20px 0', color: '#ff6600' }}>Новая тренировка</h3>
-        
-        {/* Переключатель режима создания */}
-        <div style={{ marginBottom: 20 }}>
-          <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-            <button
-              onClick={() => setCreationMode('manual')}
-              style={{
-                flex: 1,
-                padding: 12,
-                border: '2px solid #ff6600',
-                background: creationMode === 'manual' ? '#ff6600' : 'white',
-                color: creationMode === 'manual' ? 'white' : '#ff6600',
-                borderRadius: 8,
-                fontSize: 14,
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              📝 Ручной ввод
-            </button>
-            <button
-              onClick={() => setCreationMode('file')}
-              style={{
-                flex: 1,
-                padding: 12,
-                border: '2px solid #ff6600',
-                background: creationMode === 'file' ? '#ff6600' : 'white',
-                color: creationMode === 'file' ? 'white' : '#ff6600',
-                borderRadius: 8,
-                fontSize: 14,
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-            >
-              📁 Загрузить файл
-            </button>
-          </div>
+      <h3 style={{ margin: '0 0 20px 0', color: '#ff6600' }}>Новая тренировка</h3>
+      
+      {/* Переключатель режима создания */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <button
+            type="button"
+            onClick={() => setCreationMode('manual')}
+            style={{
+              flex: 1,
+              padding: 12,
+              border: '2px solid #ff6600',
+              background: creationMode === 'manual' ? '#ff6600' : 'white',
+              color: creationMode === 'manual' ? 'white' : '#ff6600',
+              borderRadius: 8,
+              fontSize: 14,
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            📝 Ручной ввод
+          </button>
+          <button
+            type="button"
+            onClick={() => setCreationMode('file')}
+            style={{
+              flex: 1,
+              padding: 12,
+              border: '2px solid #ff6600',
+              background: creationMode === 'file' ? '#ff6600' : 'white',
+              color: creationMode === 'file' ? 'white' : '#ff6600',
+              borderRadius: 8,
+              fontSize: 14,
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            📁 Загрузить файл
+          </button>
         </div>
+      </div>
 
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          if (!newWorkout.name || !newWorkout.distance || isProcessing) return;
+          handleSave();
+        }}
+      >
         {creationMode === 'file' ? (
           <FileUploadSection 
             uploadedFile={uploadedFile}
@@ -205,6 +260,7 @@ function CreateWorkoutModal({ onClose, onSave }) {
         {/* Кнопки управления */}
         <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
           <button
+            type="button"
             onClick={onClose}
             style={{
               flex: 1,
@@ -221,7 +277,7 @@ function CreateWorkoutModal({ onClose, onSave }) {
             Отмена
           </button>
           <button
-            onClick={handleSave}
+            type="submit"
             disabled={!newWorkout.name || !newWorkout.distance || isProcessing}
             style={{
               flex: 1,
@@ -238,9 +294,11 @@ function CreateWorkoutModal({ onClose, onSave }) {
             {isProcessing ? 'Обработка...' : 'Создать'}
           </button>
         </div>
-      </div>
+      </form>
     </div>
-  );
+  </div>
+);
+
 }
 
 

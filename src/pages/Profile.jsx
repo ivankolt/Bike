@@ -12,7 +12,7 @@ function Profile({ userProfile, onSave }) {
 
   useEffect(() => {
     if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-      const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
+      const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
       setUser(tgUser);
       setForm({
         first_name: tgUser.first_name || '',

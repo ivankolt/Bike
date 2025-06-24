@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import WorkoutHistogram from './WorkoutHistogram'; // импортируй свой компонент гистограммы
 
 // Формула для расчёта мощности
 function calculatePower(weight, height, avgSpeed, k = 1.2) {
@@ -95,9 +96,27 @@ function WorkoutDetailsModal({ workout, userProfile, onClose }) {
 
 function Workouts({ workouts, onDeleteWorkout, userProfile }) {
   const [selectedWorkout, setSelectedWorkout] = useState(null);
+  const [showReport, setShowReport] = useState(false);
 
   return (
     <div>
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+        <button
+          onClick={() => setShowReport(true)}
+          style={{
+            padding: '8px 20px',
+            background: '#ff6600',
+            color: '#fff',
+            border: 'none',
+            borderRadius: 8,
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            fontSize: 16
+          }}
+        >
+          📊 Отчёт
+        </button>
+      </div>
       <h2>Мои тренировки</h2>
       {workouts.length === 0 ? (
         <div>Пока нет тренировок</div>
@@ -116,6 +135,12 @@ function Workouts({ workouts, onDeleteWorkout, userProfile }) {
           workout={selectedWorkout}
           userProfile={userProfile}
           onClose={() => setSelectedWorkout(null)}
+        />
+      )}
+      {showReport && (
+        <WorkoutHistogram
+          workouts={workouts}
+          onClose={() => setShowReport(false)}
         />
       )}
     </div>
