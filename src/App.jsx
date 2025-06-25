@@ -25,13 +25,16 @@ function App() {
     height: '',
     telegram_id: null
   });
- useEffect(() => {
+useEffect(() => {
   if (window.Telegram && window.Telegram.WebApp) {
     window.Telegram.WebApp.ready();
+    console.log('initData:', window.Telegram.WebApp.initData);
+    console.log('initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe);
+    
     const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
     if (tgUser) {
-      setForm(form => ({
-        ...form,
+      setUserProfile(prevProfile => ({
+        ...prevProfile,
         first_name: tgUser.first_name || '',
         username: tgUser.username || '',
         telegram_id: tgUser.id || ''
