@@ -11,22 +11,17 @@ function Profile({ userProfile, onSave }) {
     telegram_id: userProfile.telegram_id || ''
   });
 
-  useEffect(() => {
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    console.log('initData:', window.Telegram.WebApp.initData);
-    console.log('initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe);
-    const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
-    if (tgUser) {
-      setUserProfile({
-        ...userProfile,
-        first_name: tgUser.first_name || '',
-        username: tgUser.username || '',
-        telegram_id: tgUser.id || ''
-      });
-    }
-  }
-}, []);
+ useEffect(() => {
+    setForm({
+      first_name: userProfile.first_name || '',
+      username: userProfile.username || '',
+      age: userProfile.age || '',
+      weight: userProfile.weight || '',
+      height: userProfile.height || '',
+      telegram_id: userProfile.telegram_id || ''
+    });
+  }, [userProfile]);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };

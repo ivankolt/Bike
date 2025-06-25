@@ -25,19 +25,20 @@ function App() {
     height: '',
     telegram_id: null
   });
-   useEffect(() => {
-    if (window.Telegram && window.Telegram.WebApp) {
-      window.Telegram.WebApp.ready();
-      const tgUser = window.Telegram.WebApp.initData;
-      if (tgUser) {
-        setUserProfile({
-          telegram_id: tgUser.id,
-          first_name: tgUser.first_name,
-          username: tgUser.username
-        });
-      }
+ useEffect(() => {
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+    if (tgUser) {
+      setForm(form => ({
+        ...form,
+        first_name: tgUser.first_name || '',
+        username: tgUser.username || '',
+        telegram_id: tgUser.id || ''
+      }));
     }
-  }, []);
+  }
+}, []);
 
   const handleAddWorkout = () => {
     setShowCreateModal(true);
