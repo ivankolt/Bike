@@ -167,6 +167,8 @@ const handleSaveProfile = async (profile) => {
       )}
     </>
   );
+
+  
 }
 // Компонент модального окна с выбором способа создания
 const [newWorkout, setNewWorkout] = useState({
@@ -213,7 +215,7 @@ const newWorkoutClear = {
   } finally {
     setIsProcessing(false);
   }
-};
+
 
  return (
   <div style={{
@@ -344,7 +346,8 @@ const newWorkoutClear = {
     </div>
   </div>
 );
-}
+
+};
 
 function FileUploadSection({ uploadedFile, setUploadedFile, newWorkout, setNewWorkout, isProcessing, setIsProcessing }) {
   const [dragActive, setDragActive] = useState(false);
