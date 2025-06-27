@@ -26,22 +26,33 @@ function App() {
     telegram_id: null
   });
 useEffect(() => {
-  if (window.Telegram && window.Telegram.WebApp) {
-    window.Telegram.WebApp.ready();
-    console.log('initData:', window.Telegram.WebApp.initData);
-    console.log('initDataUnsafe:', window.Telegram.WebApp.initDataUnsafe);
-    
-    const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
-    if (tgUser) {
-      setUserProfile(prevProfile => ({
-        ...prevProfile,
-        first_name: tgUser.first_name || '',
-        username: tgUser.username || '',
-        telegram_id: tgUser.id || ''
-      }));
-    }
-  }
-}, []);
+    const loadProfile = async () => {
+      if (userProfile.telegram_id) {
+        const { data, error } = await supabase
+          .from('users')
+          .select('*')
+          .eq('telegram_id', userProfile.telegram_id)
+          .single();
+        if (data) setUserProfile(data);
+      }
+    };
+    loadProfile();
+  }, [userProfile.telegram_id]);
+
+  // Загрузка тренировок при изменении user_id (или telegram_id)
+  useEffect(() => {
+    const loadWorkouts = async () => {
+      if (userProfile.id) { // или userProfile.telegram_id
+        const { data, error } = await supabase
+          .from('workouts')
+          .select('*')
+          .eq('user_id', userProfile.id) // или .eq('telegram_id', userProfile.telegram_id)
+          .order('date', { ascending: false });
+        if (data) setWorkouts(data);
+      }
+    };
+    loadWorkouts();
+  }, [userProfile.id]);
 
   const handleAddWorkout = () => {
     setShowCreateModal(true);
@@ -161,11 +172,10 @@ function CreateWorkoutModal({ onClose, onSave }) {
   maxSpeed: ''
 };
 
-  const handleSave = async () => {
+ const handleSave = async () => {
   setIsProcessing(true);
   try {
-    await addWorkout(newWorkout); // addWorkout должен быть асинхронной функцией, сохраняющей в Supabase
-    // Можно сбросить форму или закрыть модалку
+    await onSave(newWorkout); // ✅ Используй onSave, который передан из App
     setNewWorkout(newWorkoutClear);
     onClose();
   } catch (err) {
@@ -174,7 +184,6 @@ function CreateWorkoutModal({ onClose, onSave }) {
     setIsProcessing(false);
   }
 };
-
 
  return (
   <div style={{
