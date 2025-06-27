@@ -41,10 +41,43 @@ function getHistogramData(workouts, period = 'week') {
     total
   };
 }
+function getTotals(workouts) {
+  const now = new Date();
+  let totalWeek = 0, totalMonth = 0, totalYear = 0;
+
+  workouts.forEach(w => {
+    if (!w.date) return;
+    const date = new Date(w.date);
+    const km = parseFloat((w.distance || '').replace(/[^\d.]/g, '')) || 0;
+
+    // За последние 7 дней (включая сегодня)
+    if ((now - date) / (1000 * 60 * 60 * 24) < 7) {
+      totalWeek += km;
+    }
+    // За текущий месяц
+    if (date.getFullYear() === now.getFullYear() && date.getMonth() === now.getMonth()) {
+      totalMonth += km;
+    }
+    // За текущий год
+    if (date.getFullYear() === now.getFullYear()) {
+      totalYear += km;
+    }
+  });
+
+  return {
+    week: totalWeek,
+    month: totalMonth,
+    year: totalYear
+  };
+}
+
+
 
 export default function WorkoutHistogram({ workouts, onClose }) {
   const [period, setPeriod] = useState('week');
   const { labels, data } = getHistogramData(workouts, period);
+
+  const totals = getTotals(workouts);
 
   const chartData = {
     labels,
@@ -119,6 +152,18 @@ export default function WorkoutHistogram({ workouts, onClose }) {
           }}
         >×</button>
         <h2 style={{ textAlign: 'center', color: '#ff6600', marginBottom: 24 }}>Отчёт по тренировкам</h2>
+        <div style={{
+          display: 'flex', 
+          justifyContent: 'center', 
+          gap: 32, 
+          marginBottom: 16, 
+          fontWeight: 'bold',
+          fontSize: 18
+        }}>
+          <div>Неделя: <span style={{color:'#ff6600'}}>{totals.week.toFixed(1)} км</span></div>
+          <div>Месяц: <span style={{color:'#ff6600'}}>{totals.month.toFixed(1)} км</span></div>
+          <div>Год: <span style={{color:'#ff6600'}}>{totals.year.toFixed(1)} км</span></div>
+        </div>
         <div style={{ display: 'flex', gap: 16, justifyContent: 'center', marginBottom: 16 }}>
           <button
             onClick={() => setPeriod('week')}
