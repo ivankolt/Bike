@@ -32,6 +32,7 @@ const [newWorkout, setNewWorkout] = useState({
 const [uploadedFile, setUploadedFile] = useState(null);
 const [isProcessing, setIsProcessing] = useState(false);
 
+const [creationMode, setCreationMode] = useState('manual');
 const newWorkoutClear = {
   name: '',
   distance: '',
