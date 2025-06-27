@@ -169,23 +169,21 @@ const handleSaveProfile = async (profile) => {
   );
 }
 // Компонент модального окна с выбором способа создания
-function CreateWorkoutModal({ onClose, onSave }) {
-  const [creationMode, setCreationMode] = useState('manual'); // 'manual' или 'file'
-  const [newWorkout, setNewWorkout] = useState({
-    name: '',
-    distance: '',
-    duration: '',
-    date: new Date().toISOString().split('T')[0],
-    // Дополнительные поля для файловой загрузки
-    avgPower: '',
-    maxPower: '',
-    avgHeartRate: '',
-    maxHeartRate: '',
-    calories: '',
-    elevation: '',
-    avgSpeed: '',
-    maxSpeed: ''
-  });
+const [newWorkout, setNewWorkout] = useState({
+  name: '',
+  distance: '',
+  duration: '',
+  date: new Date().toISOString().split('T')[0],
+  avg_power: '',
+  max_power: '',
+  avg_heart_rate: '',
+  max_heart_rate: '',
+  calories: '',
+  elevation: '',
+  avg_speed: '',
+  max_speed: ''
+});
+
 
   const [uploadedFile, setUploadedFile] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -347,7 +345,6 @@ function CreateWorkoutModal({ onClose, onSave }) {
   </div>
 );
 
-}
 
 
 function FileUploadSection({ uploadedFile, setUploadedFile, newWorkout, setNewWorkout, isProcessing, setIsProcessing }) {
