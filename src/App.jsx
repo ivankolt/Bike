@@ -449,7 +449,7 @@ function FileUploadSection({ uploadedFile, setUploadedFile, newWorkout, setNewWo
           name: name,
           distance: `${totalDistance.toFixed(1)} км`,
           duration: `${duration} мин`,
-          avgSpeed: duration > 0 ? `${(totalDistance / (duration / 60)).toFixed(1)} км/ч` : '',
+          avg_speed: duration > 0 ? `${(totalDistance / (duration / 60)).toFixed(1)} км/ч` : '',
         }));
       } catch (error) {
         console.error('Ошибка парсинга GPX файла:', error);
