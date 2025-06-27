@@ -184,22 +184,22 @@ const [newWorkout, setNewWorkout] = useState({
   max_speed: ''
 });
 
+const [uploadedFile, setUploadedFile] = useState(null);
+const [isProcessing, setIsProcessing] = useState(false);
 
-  const [uploadedFile, setUploadedFile] = useState(null);
-  const [isProcessing, setIsProcessing] = useState(false);
-  const newWorkoutClear = {
+const newWorkoutClear = {
   name: '',
   distance: '',
   duration: '',
   date: new Date().toISOString().split('T')[0],
-  avgPower: '',
-  maxPower: '',
-  avgHeartRate: '',
-  maxHeartRate: '',
+  avg_power: '',
+  max_power: '',
+  avg_heart_rate: '',
+  max_heart_rate: '',
   calories: '',
   elevation: '',
-  avgSpeed: '',
-  maxSpeed: ''
+  avg_speed: '',
+  max_speed: ''
 };
 
  const handleSave = async () => {
