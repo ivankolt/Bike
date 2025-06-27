@@ -25,19 +25,46 @@ function App() {
     height: '',
     telegram_id: null
   });
+  useEffect(() => {
+  // 1. Получаем данные из Telegram WebApp (например, в App или Profile)
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    const tgUser = window.Telegram.WebApp.initDataUnsafe?.user;
+    if (tgUser) {
+      setUserProfile(prev => ({
+        ...prev,
+        telegram_id: tgUser.id,
+        first_name: tgUser.first_name,
+        username: tgUser.username
+      }));
+    }
+  }
+}, []);
+
 useEffect(() => {
-    const loadProfile = async () => {
-      if (userProfile.telegram_id) {
-        const { data, error } = await supabase
-          .from('users')
-          .select('*')
-          .eq('telegram_id', userProfile.telegram_id)
-          .single();
-        if (data) setUserProfile(data);
+  const loadProfile = async () => {
+    if (userProfile.telegram_id) {
+      const { data } = await supabase
+        .from('users')
+        .select('*')
+        .eq('telegram_id', userProfile.telegram_id)
+        .single();
+
+      if (data) {
+        // Объединяем: если в базе null, берём из Telegram
+        setUserProfile(prev => ({
+          ...prev,
+          ...data,
+          first_name: data.first_name ?? prev.first_name,
+          username: data.username ?? prev.username,
+          telegram_id: data.telegram_id ?? prev.telegram_id,
+        }));
       }
-    };
-    loadProfile();
-  }, [userProfile.telegram_id]);
+      // Если data нет — оставляем только Telegram-данные
+    }
+  };
+  loadProfile();
+}, [userProfile.telegram_id]);
 
   // Загрузка тренировок при изменении user_id (или telegram_id)
   useEffect(() => {
@@ -57,18 +84,23 @@ useEffect(() => {
   const handleAddWorkout = () => {
     setShowCreateModal(true);
   };
-  const handleSaveProfile = async (profile) => {
+const handleSaveProfile = async (profile) => {
   try {
-    // telegram_id можно брать из userProfile или из profile, оба варианта ок
     const profileWithId = { ...profile, telegram_id: userProfile.telegram_id };
     const savedProfile = await upsertUserProfile(profileWithId);
-    setUserProfile(savedProfile);
+    // Объединяем с тем, что уже есть (чтобы не потерять данные из Telegram)
+    setUserProfile(prev => ({
+      ...prev,
+      ...savedProfile,
+      first_name: savedProfile.first_name ?? prev.first_name,
+      username: savedProfile.username ?? prev.username,
+      telegram_id: savedProfile.telegram_id ?? prev.telegram_id,
+    }));
     alert('Профиль сохранён!');
   } catch (err) {
     alert('Ошибка сохранения профиля: ' + err.message);
   }
 };
-  
 
  const addWorkout = async (newWorkout) => {
   try {
