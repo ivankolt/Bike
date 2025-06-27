@@ -1,7 +1,7 @@
 import { FaUser, FaBiking, FaTrophy, FaMedal } from "react-icons/fa";
 
 const tabList = [
-  { name: 'Профиль', key: 'profile', icon: <FaUser /> },
+  { name: 'Профилль', key: 'profile', icon: <FaUser /> },
   { name: 'Тренировки', key: 'workouts', icon: <FaBiking /> },
   { name: 'Соревнования', key: 'competitions', icon: <FaTrophy /> },
   { name: 'Рейтинг', key: 'rating', icon: <FaMedal /> },
