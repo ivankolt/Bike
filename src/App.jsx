@@ -344,8 +344,7 @@ const newWorkoutClear = {
     </div>
   </div>
 );
-
-
+}
 
 function FileUploadSection({ uploadedFile, setUploadedFile, newWorkout, setNewWorkout, isProcessing, setIsProcessing }) {
   const [dragActive, setDragActive] = useState(false);
