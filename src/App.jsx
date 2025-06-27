@@ -12,6 +12,185 @@ import { insertWorkout } from './supabaseApi';
 import { useEffect } from 'react';
 
 
+function CreateWorkoutModal({ onClose, onSave }) {
+// Компонент модального окна с выбором способа создания
+const [newWorkout, setNewWorkout] = useState({
+  name: '',
+  distance: '',
+  duration: '',
+  date: new Date().toISOString().split('T')[0],
+  avg_power: '',
+  max_power: '',
+  avg_heart_rate: '',
+  max_heart_rate: '',
+  calories: '',
+  elevation: '',
+  avg_speed: '',
+  max_speed: ''
+});
+
+const [uploadedFile, setUploadedFile] = useState(null);
+const [isProcessing, setIsProcessing] = useState(false);
+
+const newWorkoutClear = {
+  name: '',
+  distance: '',
+  duration: '',
+  date: new Date().toISOString().split('T')[0],
+  avg_power: '',
+  max_power: '',
+  avg_heart_rate: '',
+  max_heart_rate: '',
+  calories: '',
+  elevation: '',
+  avg_speed: '',
+  max_speed: ''
+};
+
+ const handleSave = async () => {
+  setIsProcessing(true);
+  try {
+    await onSave(newWorkout); // ✅ Используй onSave, который передан из App
+    setNewWorkout(newWorkoutClear);
+    onClose();
+  } catch (err) {
+    alert('Ошибка сохранения: ' + err.message);
+  } finally {
+    setIsProcessing(false);
+  }
+};
+
+ return (
+  <div style={{
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    background: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 1000
+  }}>
+    <div style={{
+      background: 'white',
+      padding: 24,
+      borderRadius: 16,
+      width: '90%',
+      maxWidth: 500,
+      maxHeight: '90vh',
+      overflowY: 'auto',
+      boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
+    }}>
+      <h3 style={{ margin: '0 0 20px 0', color: '#ff6600' }}>Новая тренировка</h3>
+      
+      {/* Переключатель режима создания */}
+      <div style={{ marginBottom: 20 }}>
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <button
+            type="button"
+            onClick={() => setCreationMode('manual')}
+            style={{
+              flex: 1,
+              padding: 12,
+              border: '2px solid #ff6600',
+              background: creationMode === 'manual' ? '#ff6600' : 'white',
+              color: creationMode === 'manual' ? 'white' : '#ff6600',
+              borderRadius: 8,
+              fontSize: 14,
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            📝 Ручной ввод
+          </button>
+          <button
+            type="button"
+            onClick={() => setCreationMode('file')}
+            style={{
+              flex: 1,
+              padding: 12,
+              border: '2px solid #ff6600',
+              background: creationMode === 'file' ? '#ff6600' : 'white',
+              color: creationMode === 'file' ? 'white' : '#ff6600',
+              borderRadius: 8,
+              fontSize: 14,
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            📁 Загрузить файл
+          </button>
+        </div>
+      </div>
+
+      <form
+        onSubmit={e => {
+          e.preventDefault();
+          if (!newWorkout.name || !newWorkout.distance || isProcessing) return;
+          handleSave();
+        }}
+      >
+        {creationMode === 'file' ? (
+          <FileUploadSection 
+            uploadedFile={uploadedFile}
+            setUploadedFile={setUploadedFile}
+            newWorkout={newWorkout}
+            setNewWorkout={setNewWorkout}
+            isProcessing={isProcessing}
+            setIsProcessing={setIsProcessing}
+          />
+        ) : (
+          <ManualInputSection 
+            newWorkout={newWorkout}
+            setNewWorkout={setNewWorkout}
+          />
+        )}
+
+        {/* Кнопки управления */}
+        <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              flex: 1,
+              padding: 12,
+              border: '2px solid #ff6600',
+              background: 'white',
+              color: '#ff6600',
+              borderRadius: 8,
+              fontSize: 16,
+              cursor: 'pointer',
+              fontWeight: 'bold'
+            }}
+          >
+            Отмена
+          </button>
+          <button
+            type="submit"
+            disabled={!newWorkout.name || !newWorkout.distance || isProcessing}
+            style={{
+              flex: 1,
+              padding: 12,
+              border: 'none',
+              background: (newWorkout.name && newWorkout.distance && !isProcessing) ? '#ff6600' : '#ccc',
+              color: 'white',
+              borderRadius: 8,
+              fontSize: 16,
+              cursor: (newWorkout.name && newWorkout.distance && !isProcessing) ? 'pointer' : 'not-allowed',
+              fontWeight: 'bold'
+            }}
+          >
+            {isProcessing ? 'Обработка...' : 'Создать'}
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+);
+}
+
 
 function App() {
   const [tab, setTab] = useState('profile');
@@ -167,187 +346,8 @@ const handleSaveProfile = async (profile) => {
       )}
     </>
   );
-
-  
 }
-// Компонент модального окна с выбором способа создания
-const [newWorkout, setNewWorkout] = useState({
-  name: '',
-  distance: '',
-  duration: '',
-  date: new Date().toISOString().split('T')[0],
-  avg_power: '',
-  max_power: '',
-  avg_heart_rate: '',
-  max_heart_rate: '',
-  calories: '',
-  elevation: '',
-  avg_speed: '',
-  max_speed: ''
-});
 
-const [uploadedFile, setUploadedFile] = useState(null);
-const [isProcessing, setIsProcessing] = useState(false);
-
-const newWorkoutClear = {
-  name: '',
-  distance: '',
-  duration: '',
-  date: new Date().toISOString().split('T')[0],
-  avg_power: '',
-  max_power: '',
-  avg_heart_rate: '',
-  max_heart_rate: '',
-  calories: '',
-  elevation: '',
-  avg_speed: '',
-  max_speed: ''
-};
-
- const handleSave = async () => {
-  setIsProcessing(true);
-  try {
-    await onSave(newWorkout); // ✅ Используй onSave, который передан из App
-    setNewWorkout(newWorkoutClear);
-    onClose();
-  } catch (err) {
-    alert('Ошибка сохранения: ' + err.message);
-  } finally {
-    setIsProcessing(false);
-  }
-
-
- return (
-  <div style={{
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    background: 'rgba(0,0,0,0.5)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 1000
-  }}>
-    <div style={{
-      background: 'white',
-      padding: 24,
-      borderRadius: 16,
-      width: '90%',
-      maxWidth: 500,
-      maxHeight: '90vh',
-      overflowY: 'auto',
-      boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
-    }}>
-      <h3 style={{ margin: '0 0 20px 0', color: '#ff6600' }}>Новая тренировка</h3>
-      
-      {/* Переключатель режима создания */}
-      <div style={{ marginBottom: 20 }}>
-        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
-          <button
-            type="button"
-            onClick={() => setCreationMode('manual')}
-            style={{
-              flex: 1,
-              padding: 12,
-              border: '2px solid #ff6600',
-              background: creationMode === 'manual' ? '#ff6600' : 'white',
-              color: creationMode === 'manual' ? 'white' : '#ff6600',
-              borderRadius: 8,
-              fontSize: 14,
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            📝 Ручной ввод
-          </button>
-          <button
-            type="button"
-            onClick={() => setCreationMode('file')}
-            style={{
-              flex: 1,
-              padding: 12,
-              border: '2px solid #ff6600',
-              background: creationMode === 'file' ? '#ff6600' : 'white',
-              color: creationMode === 'file' ? 'white' : '#ff6600',
-              borderRadius: 8,
-              fontSize: 14,
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            📁 Загрузить файл
-          </button>
-        </div>
-      </div>
-
-      <form
-        onSubmit={e => {
-          e.preventDefault();
-          if (!newWorkout.name || !newWorkout.distance || isProcessing) return;
-          handleSave();
-        }}
-      >
-        {creationMode === 'file' ? (
-          <FileUploadSection 
-            uploadedFile={uploadedFile}
-            setUploadedFile={setUploadedFile}
-            newWorkout={newWorkout}
-            setNewWorkout={setNewWorkout}
-            isProcessing={isProcessing}
-            setIsProcessing={setIsProcessing}
-          />
-        ) : (
-          <ManualInputSection 
-            newWorkout={newWorkout}
-            setNewWorkout={setNewWorkout}
-          />
-        )}
-
-        {/* Кнопки управления */}
-        <div style={{ display: 'flex', gap: 12, marginTop: 20 }}>
-          <button
-            type="button"
-            onClick={onClose}
-            style={{
-              flex: 1,
-              padding: 12,
-              border: '2px solid #ff6600',
-              background: 'white',
-              color: '#ff6600',
-              borderRadius: 8,
-              fontSize: 16,
-              cursor: 'pointer',
-              fontWeight: 'bold'
-            }}
-          >
-            Отмена
-          </button>
-          <button
-            type="submit"
-            disabled={!newWorkout.name || !newWorkout.distance || isProcessing}
-            style={{
-              flex: 1,
-              padding: 12,
-              border: 'none',
-              background: (newWorkout.name && newWorkout.distance && !isProcessing) ? '#ff6600' : '#ccc',
-              color: 'white',
-              borderRadius: 8,
-              fontSize: 16,
-              cursor: (newWorkout.name && newWorkout.distance && !isProcessing) ? 'pointer' : 'not-allowed',
-              fontWeight: 'bold'
-            }}
-          >
-            {isProcessing ? 'Обработка...' : 'Создать'}
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-);
-
-};
 
 function FileUploadSection({ uploadedFile, setUploadedFile, newWorkout, setNewWorkout, isProcessing, setIsProcessing }) {
   const [dragActive, setDragActive] = useState(false);
