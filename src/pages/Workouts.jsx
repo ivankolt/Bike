@@ -49,7 +49,7 @@ function WorkoutCard({ workout, onClick, onDelete }) {
       <div style={{ color: '#666', fontSize: 14, marginBottom: 8 }}>
         {workout.distance} - {workout.duration} - {workout.date}
       </div>
-      {(workout.avgPower || workout.calories || workout.avgHeartRate) && (
+      {(workout.avg_power || workout.calories || workout.avg_heart_rate) && (
         <div style={{ 
           display: 'grid', 
           gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', 
@@ -60,9 +60,9 @@ function WorkoutCard({ workout, onClick, onDelete }) {
           paddingTop: 8,
           borderTop: '1px solid #f0f0f0'
         }}>
-          {workout.avgPower && <div>Power: {workout.avgPower}</div>}
+          {workout.avg_power && <div>Power: {workout.avg_power}</div>}
           {workout.calories && <div>Calories: {workout.calories}</div>}
-          {workout.avgHeartRate && <div>Heart Rate: {workout.avgHeartRate}</div>}
+          {workout.avg_heart_rate && <div>Heart Rate: {workout.avg_heart_rate}</div>}
           {workout.elevation && <div>Elevation: {workout.elevation}</div>}
         </div>
       )}
@@ -72,9 +72,9 @@ function WorkoutCard({ workout, onClick, onDelete }) {
 
 function WorkoutDetailsModal({ workout, userProfile, onClose }) {
   if (!workout) return null;
-  const avgSpeed = parseFloat(workout.avgSpeed || workout.distance) / (parseFloat(workout.duration) / 60);
-  const power = workout.avgPower ||
-    calculatePower(userProfile.weight, userProfile.height, avgSpeed);
+  const avgSpeed = parseFloat(workout.avg_speed || workout.distance) / (parseFloat(workout.duration) / 60);
+const power = workout.avg_power ||
+  calculatePower(userProfile.weight, userProfile.height, avgSpeed);
 
   return (
     <div className="modal" style={{
@@ -86,7 +86,7 @@ function WorkoutDetailsModal({ workout, userProfile, onClose }) {
         <div>Дата: {workout.date}</div>
         <div>Время: {workout.duration}</div>
         <div>Дистанция: {workout.distance}</div>
-        <div>Средняя скорость: {workout.avgSpeed || (avgSpeed ? avgSpeed.toFixed(1) + ' км/ч' : '—')}</div>
+        <div>Средняя скорость: {workout.avg_speed || (avgSpeed ? avgSpeed.toFixed(1) + ' км/ч' : '—')}</div>
         <div>Мощность: {power ? power + ' Вт' : '—'}</div>
         <button onClick={onClose} style={{ marginTop: 16 }}>Закрыть</button>
       </div>
