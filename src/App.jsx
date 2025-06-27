@@ -401,14 +401,14 @@ function FileUploadSection({ uploadedFile, setUploadedFile, newWorkout, setNewWo
           name: file.name.replace('.fit', ''),
           distance: '25.3 км',
           duration: '68 мин',
-          avgPower: '245 Вт',
-          maxPower: '420 Вт',
-          avgHeartRate: '145 уд/мин',
-          maxHeartRate: '178 уд/мин',
+          avg_power: '245 Вт',
+          max_power: '420 Вт',
+          avg_heart_rate: '145 уд/мин',
+          max_heart_rate: '178 уд/мин',
           calories: '856 ккал',
           elevation: '450 м',
-          avgSpeed: '22.4 км/ч',
-          maxSpeed: '54.2 км/ч'
+          avg_speed: '22.4 км/ч',
+          max_speed: '54.2 км/ч'
         }));
       } catch (error) {
         console.error('Ошибка парсинга FIT файла:', error);
@@ -470,14 +470,14 @@ function FileUploadSection({ uploadedFile, setUploadedFile, newWorkout, setNewWo
           name: jsonData.name || file.name.replace('.json', ''),
           distance: jsonData.distance || '',
           duration: jsonData.duration || '',
-          avgPower: jsonData.avgPower || '',
-          maxPower: jsonData.maxPower || '',
-          avgHeartRate: jsonData.avgHeartRate || '',
-          maxHeartRate: jsonData.maxHeartRate || '',
+          avg_power: jsonData.avg_power || '',
+          max_power: jsonData.max_power || '',
+          avg_heart_rate: jsonData.avg_heart_rate || '',
+          max_heart_rate: jsonData.max_heart_rate || '',
           calories: jsonData.calories || '',
           elevation: jsonData.elevation || '',
-          avgSpeed: jsonData.avgSpeed || '',
-          maxSpeed: jsonData.maxSpeed || ''
+          avg_speed: jsonData.avg_speed || '',
+          max_speed: jsonData.max_speed || ''
         }));
       } catch (error) {
         console.error('Ошибка парсинга JSON файла:', error);
@@ -660,8 +660,8 @@ function ManualInputSection({ newWorkout, setNewWorkout }) {
             <label style={labelStyle}>Средняя мощность</label>
             <input
               type="text"
-              value={newWorkout.avgPower}
-              onChange={(e) => setNewWorkout({...newWorkout, avgPower: e.target.value})}
+              value={newWorkout.avg_power}
+              onChange={(e) => setNewWorkout({...newWorkout, avg_power: e.target.value})}
               placeholder="200 Вт"
               style={inputStyle}
             />
@@ -670,8 +670,8 @@ function ManualInputSection({ newWorkout, setNewWorkout }) {
             <label style={labelStyle}>Максимальная мощность</label>
             <input
               type="text"
-              value={newWorkout.maxPower}
-              onChange={(e) => setNewWorkout({...newWorkout, maxPower: e.target.value})}
+              value={newWorkout.max_power}
+              onChange={(e) => setNewWorkout({...newWorkout, max_power: e.target.value})}
               placeholder="350 Вт"
               style={inputStyle}
             />
@@ -683,8 +683,8 @@ function ManualInputSection({ newWorkout, setNewWorkout }) {
             <label style={labelStyle}>Средний пульс</label>
             <input
               type="text"
-              value={newWorkout.avgHeartRate}
-              onChange={(e) => setNewWorkout({...newWorkout, avgHeartRate: e.target.value})}
+              value={newWorkout.avg_heart_rate}
+              onChange={(e) => setNewWorkout({...newWorkout, avg_heart_rate: e.target.value})}
               placeholder="140 уд/мин"
               style={inputStyle}
             />
@@ -693,8 +693,8 @@ function ManualInputSection({ newWorkout, setNewWorkout }) {
             <label style={labelStyle}>Максимальный пульс</label>
             <input
               type="text"
-              value={newWorkout.maxHeartRate}
-              onChange={(e) => setNewWorkout({...newWorkout, maxHeartRate: e.target.value})}
+              value={newWorkout.max_heart_rate}
+              onChange={(e) => setNewWorkout({...newWorkout, max_heart_rate: e.target.value})}
               placeholder="175 уд/мин"
               style={inputStyle}
             />
