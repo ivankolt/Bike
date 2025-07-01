@@ -299,10 +299,34 @@ const handleSaveProfile = async (profile) => {
     alert('Ошибка сохранения тренировки: ' + err.message);
   }
 };
+const deleteWorkout = async (workoutId) => {
+  try {
+    // 1. Находим пользователя по telegram_id
+    const { data: user } = await supabase
+      .from('users')
+      .select('id')
+      .eq('telegram_id', userProfile.telegram_id)
+      .single();
 
-  const deleteWorkout = (id) => {
-    setWorkouts(workouts.filter(workout => workout.id !== id));
-  };
+    if (user) {
+      // 2. Удаляем тренировку по id и user_id
+      const { error } = await supabase
+        .from('workouts')
+        .delete()
+        .eq('id', workoutId)
+        .eq('user_id', user.id);
+
+      if (error) {
+        alert('Ошибка удаления тренировки: ' + error.message);
+      } else {
+        // Обновляем локальное состояние
+        setWorkouts(workouts.filter(workout => workout.id !== workoutId));
+      }
+    }
+  } catch (err) {
+    alert('Ошибка при удалении тренировки: ' + err.message);
+  }
+};
 
   const renderContent = () => {
     switch (tab) {
